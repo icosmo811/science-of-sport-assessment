@@ -184,4 +184,15 @@ class EntryManagementTest extends TestCase
             ],
         ];
     }
+
+    public function test_dashboard_redirects_authenticated_users_to_entries(): void
+    {
+        $editor = User::factory()->create([
+            'role' => UserRole::EDITOR,
+        ]);
+
+        $this->actingAs($editor)
+            ->get(route('dashboard'))
+            ->assertRedirect('/entries');
+    }
 }

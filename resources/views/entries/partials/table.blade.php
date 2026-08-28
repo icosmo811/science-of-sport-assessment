@@ -60,6 +60,16 @@
                     </td>
 
                     <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                        @if ($entry->published_at)
+                            <a
+                                href="{{ route('entries.public.show', $entry) }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="mr-3 text-emerald-600 hover:text-emerald-900"
+                            >
+                                View
+                            </a>
+                        @endif
                         <a
                             href="{{ route('entries.edit', $entry) }}"
                             class="text-indigo-600 hover:text-indigo-900"
