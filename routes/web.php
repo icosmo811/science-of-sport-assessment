@@ -2,11 +2,18 @@
 
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicEntryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect(
+    '/',
+    '/events/golf-classic-tournament-2025',
+);
+
+Route::get(
+    '/events/{entry:slug}',
+    PublicEntryController::class,
+)->name('entries.public.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
