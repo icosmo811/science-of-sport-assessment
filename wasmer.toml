@@ -1,6 +1,6 @@
 [package]
 name = "ochoapinac/science-of-sport-assessment"
-version = "0.1.4"
+version = "0.1.6"
 description = "Science of Sport Laravel technical assessment"
 entrypoint = "run"
 
@@ -8,6 +8,7 @@ entrypoint = "run"
 "php/php" = "=8.3.403"
 
 [fs]
+"/app" = "wasmer-root"
 "/app/app" = "app"
 "/app/bootstrap" = "bootstrap"
 "/app/config" = "config"
@@ -17,7 +18,6 @@ entrypoint = "run"
 "/app/routes" = "routes"
 "/app/storage" = "storage"
 "/app/vendor" = "vendor"
-"/app/artisan" = "artisan"
 
 [[command]]
 name = "run"

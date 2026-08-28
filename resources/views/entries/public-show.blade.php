@@ -44,8 +44,24 @@
         </header>
 
         <main>
+            @php
+                $heroImageUrl = $entry->hero_image_url
+                    ? (Str::startsWith($entry->hero_image_url, ['http://', 'https://'])
+                        ? $entry->hero_image_url
+                        : asset($entry->hero_image_url))
+                    : null;
+            @endphp
             <section class="relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-950 to-sky-950"></div>
+                @if ($heroImageUrl)
+                    <img
+                        src="{{ $heroImageUrl }}"
+                        alt=""
+                        class="absolute inset-0 h-full w-full object-cover"
+                    >
+                    <div class="absolute inset-0 bg-slate-950/70"></div>
+                @else
+                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-950 to-sky-950"></div>
+                @endif
                 <div class="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"></div>
                 <div class="absolute -bottom-32 left-10 h-80 w-80 rounded-full bg-sky-500/20 blur-3xl"></div>
 
