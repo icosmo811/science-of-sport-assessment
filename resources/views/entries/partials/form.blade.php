@@ -179,17 +179,27 @@
 </div>
 
 <div class="space-y-6 bg-white p-6 shadow-sm sm:rounded-lg">
-    <div>
-        <h3 class="text-lg font-semibold text-gray-900">
-            Event options
-        </h3>
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900">
+                Event options
+            </h3>
 
-        <p class="mt-1 text-sm text-gray-500">
-            At least one option is required.
-        </p>
+            <p class="mt-1 text-sm text-gray-500">
+                At least one option is required.
+            </p>
+        </div>
+
+        <button
+            id="add-event-option"
+            type="button"
+            class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500"
+        >
+            Add option
+        </button>
     </div>
 
-    <div class="space-y-6">
+    <div id="event-options-list" class="space-y-6">
         @foreach ($eventOptions as $index => $option)
             @php
                 $optionBenefits = $option['benefits'] ?? [];
@@ -199,9 +209,15 @@
                 }
             @endphp
 
-            <fieldset class="rounded-md border border-gray-200 p-4">
+            <fieldset
+                class="rounded-md border border-gray-200 p-4"
+                data-event-option
+                data-option-index="{{ $index }}"
+            >
                 <legend class="px-2 text-sm font-semibold text-gray-700">
-                    Option {{ $loop->iteration }}
+                    <span data-option-title>
+                        Option {{ $loop->iteration }}
+                    </span>
                 </legend>
 
                 <div class="grid gap-4 md:grid-cols-2">
@@ -327,6 +343,15 @@
                         </p>
                     </div>
                 </div>
+                <div class="mt-4 flex justify-end">
+                    <button
+                        type="button"
+                        class="text-sm font-semibold text-red-600 hover:text-red-800"
+                        data-remove-option
+                    >
+                        Remove option
+                    </button>
+                </div>
             </fieldset>
         @endforeach
     </div>
@@ -347,3 +372,137 @@
         {{ $submitLabel }}
     </button>
 </div>
+
+@once
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const list = document.getElementById('event-options-list');
+                const addButton = document.getElementById('add-event-option');
+
+                if (!list || !addButton) {
+                    return;
+                }
+
+                const cards = () => [
+                    ...list.querySelectorAll('[data-event-option]'),
+                ];
+
+                let nextIndex = Math.max(
+                    ...cards().map((card) => Number(card.dataset.optionIndex)),
+                    -1,
+                ) + 1;
+
+                const renumberOptions = () => {
+                    cards().forEach((card, position) => {
+                        const title = card.querySelector('[data-option-title]');
+
+                        if (title) {
+                            title.textContent = `Option ${position + 1}`;
+                        }
+                    });
+                };
+
+                const replaceIndex = (value, oldIndex, newIndex) => value
+                    .replace(
+                        `event_options[${oldIndex}]`,
+                        `event_options[${newIndex}]`,
+                    )
+                    .replace(
+                        `event_options_${oldIndex}_`,
+                        `event_options_${newIndex}_`,
+                    );
+
+                addButton.addEventListener('click', () => {
+                    const existingCards = cards();
+                    const source = existingCards.at(-1);
+
+                    if (!source) {
+                        return;
+                    }
+
+                    const clone = source.cloneNode(true);
+                    const oldIndex = clone.dataset.optionIndex;
+                    const newIndex = nextIndex++;
+
+                    clone.dataset.optionIndex = newIndex;
+
+                    clone.querySelectorAll('[name]').forEach((field) => {
+                        field.name = replaceIndex(
+                            field.name,
+                            oldIndex,
+                            newIndex,
+                        );
+                    });
+
+                    clone.querySelectorAll('[id]').forEach((field) => {
+                        field.id = replaceIndex(
+                            field.id,
+                            oldIndex,
+                            newIndex,
+                        );
+                    });
+
+                    clone.querySelectorAll('label[for]').forEach((label) => {
+                        label.htmlFor = replaceIndex(
+                            label.htmlFor,
+                            oldIndex,
+                            newIndex,
+                        );
+                    });
+
+                    clone.querySelectorAll('input, textarea').forEach((field) => {
+                        field.value = '';
+                    });
+
+                    const category = clone.querySelector(
+                        '[name$="[category]"]',
+                    );
+
+                    if (category) {
+                        category.value = 'golf';
+                    }
+
+                    const sortOrder = clone.querySelector(
+                        '[name$="[sort_order]"]',
+                    );
+
+                    if (sortOrder) {
+                        sortOrder.value = existingCards.length;
+                    }
+
+                    list.appendChild(clone);
+                    renumberOptions();
+
+                    clone.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
+                });
+
+                list.addEventListener('click', (event) => {
+                    const removeButton = event.target.closest(
+                        '[data-remove-option]',
+                    );
+
+                    if (!removeButton) {
+                        return;
+                    }
+
+                    const existingCards = cards();
+
+                    if (existingCards.length === 1) {
+                        window.alert('At least one event option is required.');
+
+                        return;
+                    }
+
+                    removeButton.closest('[data-event-option]')?.remove();
+                    renumberOptions();
+                });
+
+                renumberOptions();
+            });
+        </script>
+    @endpush
+@endonce
