@@ -199,4 +199,3 @@ Secrets and local `.env` files are not committed to the repository.
 ## License
 
 This project was created as a technical assessment.
-
