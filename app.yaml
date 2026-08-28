@@ -1,0 +1,26 @@
+kind: wasmer.io/App.v0
+name: science-of-sport
+app_id: da_KGzIxtmUlk60
+owner: ochoapinac
+package: .
+
+description: Science of Sport Laravel technical assessment
+debug: false
+
+locality:
+  regions:
+    - fr-roub1
+
+env:
+  APP_ENV: production
+  APP_DEBUG: 'false'
+  APP_URL: https://science-of-sport.wasmer.app
+  LOG_CHANNEL: stderr
+  DB_CONNECTION: mysql
+  SESSION_DRIVER: database
+  CACHE_STORE: database
+  QUEUE_CONNECTION: database
+
+capabilities:
+  database:
+    engine: mysql

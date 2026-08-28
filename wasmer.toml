@@ -1,13 +1,23 @@
 [package]
-name = "icosmo811/science-of-sport-assessment"
-version = "0.1.0"
+name = "ochoapinac/science-of-sport-assessment"
+version = "0.1.4"
 description = "Science of Sport Laravel technical assessment"
+entrypoint = "run"
 
 [dependencies]
 "php/php" = "=8.3.403"
 
 [fs]
-"/app" = "."
+"/app/app" = "app"
+"/app/bootstrap" = "bootstrap"
+"/app/config" = "config"
+"/app/database" = "database"
+"/app/public" = "public"
+"/app/resources" = "resources"
+"/app/routes" = "routes"
+"/app/storage" = "storage"
+"/app/vendor" = "vendor"
+"/app/artisan" = "artisan"
 
 [[command]]
 name = "run"
@@ -23,3 +33,11 @@ main-args = [
     "-S",
     "localhost:8080",
 ]
+
+[[command]]
+name = "artisan"
+module = "php/php:php"
+runner = "wasi"
+
+[command.annotations.wasi]
+main-args = ["/app/artisan"]
