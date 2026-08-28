@@ -1,0 +1,25 @@
+[package]
+name = "icosmo811/science-of-sport-assessment"
+version = "0.1.0"
+description = "Science of Sport Laravel technical assessment"
+
+[dependencies]
+"php/php" = "=8.3.403"
+
+[fs]
+"/app" = "."
+
+[[command]]
+name = "run"
+module = "php/php:php"
+runner = "wasi"
+
+[command.annotations.wasi]
+main-args = [
+    "-d",
+    "variables_order=EGPCS",
+    "-t",
+    "/app/public",
+    "-S",
+    "localhost:8080",
+]
